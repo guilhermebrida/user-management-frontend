@@ -46,7 +46,6 @@ export default function Login() {
     //   window.location.href = "/profile";
     // }
 
-      // Redirecione ou armazene token conforme necessário
     } catch (err) {
       console.error("Erro no login", err);
     }
@@ -92,7 +91,6 @@ export default function Login() {
             backgroundColor: "rgb(247, 250, 252)"
           }}
         >
-          {/* Tabs grudado no topo */}
           <Box display={"flex"} justifyContent={"center" } alignItems={"center"}>
             <Tabs
               value={mode}
@@ -105,7 +103,6 @@ export default function Login() {
             </Tabs>
           </Box>
 
-          {/* Form centralizado abaixo do Tabs */}
           <Box
             sx={{
               flex: 1,
