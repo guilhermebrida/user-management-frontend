@@ -1,7 +1,56 @@
-import { Box, Button, Container, Grid, LinearProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography, Tabs, Tab, FormControlLabel, Checkbox } from "@mui/material";
+import { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
+  const url = "http://localhost:3000"
+  const [mode, setMode] = useState<"register" | "login">("login");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const [email, setEmail] = useState<string>('');
+  const [password,setPassword] = useState<string>('');
+
   const backgroudImage = "https://wallpapercave.com/wp/wp3327108.jpg";
+
+
+    const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(e.target.value);
+      console.log(email)
+  };
+
+      const handleChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+      console.log(password)
+  };
+
+  const handleSubmit = async () => {
+    try {
+        setFormData({
+        ['email']: email,
+        ['password']:password
+        });
+        console.log(formData)
+      const response = await axios.post(url+"/auth/login", formData);
+      console.log(response)
+      const token = response.data.access_token;
+      console.log(token);
+      localStorage.setItem("token", token);
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      console.log("Usuário logado com role:", payload.role);
+    //   if (payload.role === 'admin'){
+    //           window.location.href = "/admin";
+    //   } else {
+    //   window.location.href = "/profile";
+    // }
+
+      // Redirecione ou armazene token conforme necessário
+    } catch (err) {
+      console.error("Erro no login", err);
+    }
+  };
 
   return (
     <Box 
@@ -15,11 +64,11 @@ export default function Login() {
     >
       <Container disableGutters
         sx={{
-          margin:0,
+          margin: 0,
           height: "540px",
           width: "900px",
           display: "flex",
-          flexDirection: "row", 
+          flexDirection: "row",
           borderRadius: 3,
           boxShadow: 4,
           overflow: "hidden",
@@ -32,7 +81,7 @@ export default function Login() {
             backgroundImage: `url(${backgroudImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            padding:0
+            padding: 0
           }}
         />
         <Box
@@ -40,25 +89,63 @@ export default function Login() {
             flex: 0.5,
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
-            alignItems:"center",
-            gap: 2,
-            padding: 4,
             backgroundColor: "rgb(247, 250, 252)"
-            
           }}
         >
-            <Typography variant="h3" gutterBottom sx={{color:"#12325c"}}>Sign In</Typography>
-            <TextField fullWidth placeholder="Email" variant="outlined" size="small" sx={{width:"350px"}} />
-            <TextField fullWidth placeholder="Senha" type="password" variant="outlined" size="small" sx={{width:"350px"}} />
-            <Button size="small" sx={{bgcolor: "#12325c", color:"#ffffff"}}>Sign in</Button>
+          {/* Tabs grudado no topo */}
+          <Box display={"flex"} justifyContent={"center" } alignItems={"center"}>
+            <Tabs
+              value={mode}
+              onChange={(e, newValue) => setMode(newValue)}
+              textColor="primary"
+              indicatorColor="primary"
+            >
+              <Tab value="login" label="LOGIN" />
+              <Tab value="register" label="REGISTER" />
+            </Tabs>
+          </Box>
+
+          {/* Form centralizado abaixo do Tabs */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 2,
+              gap: 2
+            }}
+          >
+            {mode === 'login' ? (
+              <>
+                <Typography variant="h3" gutterBottom sx={{ color: "#12325c" }}>
+                  Sign In
+                </Typography>
+                <TextField fullWidth placeholder="Email" variant="outlined" size="small" onChange={handleChangeEmail} value={email} sx={{ width: "350px" }} />
+                <TextField fullWidth placeholder="Senha" type="password" variant="outlined" size="small" onChange={handleChangePass} value={password} sx={{ width: "350px" }} />
+                <Button size="small" onClick={handleSubmit} sx={{ bgcolor: "#12325c", color: "#ffffff", mt: 1 }} >
+                  Sign in
+                </Button>
+              </>
+            ) : (
+              <>
+                <Typography variant="h3" gutterBottom sx={{ color: "#12325c" }}>
+                  Register
+                </Typography>
+                <TextField label="Full Name" fullWidth size="small" sx={{ width: "350px" }} />
+                <TextField label="Email Address" fullWidth size="small" sx={{ width: "350px" }} />
+                {/* <TextField label="Mobile Number" fullWidth size="small" sx={{ width: "350px" }} /> */}
+                <TextField label="Set Password" type="password" fullWidth size="small" sx={{ width: "350px" }} />
+                <Button size="small" sx={{ bgcolor: "#12325c", color: "#ffffff", mt: 1 }} >
+                  Register
+                </Button>
+              </>
+            )}
+          </Box>
         </Box>
-        {/* <Box display="flex" flexDirection="column" gap={1} padding={0} justifyContent={"center"} alignItems={"center"}>
-            <TextField fullWidth placeholder="Email"   variant="outlined" size="small"/>
-            <TextField fullWidth placeholder="Senha" type="password" size="small" />
-            <Button size="small" sx={{bgcolor: "rgb(26, 115, 232)", color:"#ffffff"}}>Sign in</Button>
-        </Box> */}
       </Container>
     </Box>
   );
 }
+
