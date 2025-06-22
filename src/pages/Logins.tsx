@@ -28,24 +28,24 @@ export default function Login() {
 
   const handleSubmit = async () => {
     try {
-        setFormData({
-        ['email']: email,
-        ['password']:password
-        });
-        console.log(formData)
-      const response = await axios.post(url+"/auth/login", formData);
-      console.log(response)
+      const response = await axios.post(`${url}/auth/login`, {
+        email,
+        password
+      });
+
+      console.log(response);
       const token = response.data.access_token;
-      console.log(token);
       localStorage.setItem("token", token);
+
       const payload = JSON.parse(atob(token.split(".")[1]));
       console.log("Usuário logado com role:", payload.role);
-    //   if (payload.role === 'admin'){
-    //           window.location.href = "/admin";
-    //   } else {
-    //   window.location.href = "/profile";
-    // }
-
+      if (payload.role == 'admin'){
+        window.location.href = "/users"
+      }
+      if (payload.role == 'user'){
+        window.location.href = "/"
+      }
+      
     } catch (err) {
       console.error("Erro no login", err);
     }
