@@ -8,7 +8,7 @@ Este é o **frontend React** da aplicação de gerenciamento de usuários. Ele p
 
 ### ✅ Pré-requisitos
 
-- Node.js instalado (versão 18 ou superior recomendada)
+- Node.js instalado (versão 20 ou superior recomendada)
 - npm ou yarn
 - Backend rodando localmente ou em ambiente de produção
 
@@ -32,7 +32,7 @@ yarn install
 
 ### Configure as variáveis de ambiente:
 
-Crie um arquivo .env na raiz do projeto e adicione a seguinte linha:
+Crie um arquivo .env na raiz do projeto e adicione a seguinte linha apontando para o backend de produção:
 
 ```env
 REACT_APP_API_URL=https://usermanagement.duckdns.org
@@ -55,6 +55,7 @@ A aplicação estará disponível em: http://localhost:3000 (ou na porta definid
 
 ### 🔐 Credenciais de Acesso
 👤 Usuário administrador (admin)
+
 Email: admin@email.com
 
 Senha: admin
