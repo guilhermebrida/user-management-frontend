@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export default function EditProfile() {
   const [name, setName] = useState("");
@@ -19,7 +20,9 @@ export default function EditProfile() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
-
+  
+  useAuth();
+  
   const navigate = useNavigate();
   const url = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem("token");

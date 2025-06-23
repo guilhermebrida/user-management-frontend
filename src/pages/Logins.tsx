@@ -1,6 +1,7 @@
 import { Box, Button, Container, TextField, Typography, Tabs, Tab, CircularProgress} from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import backgroudImage from "../assets/wp3327108.webp"
 
 export default function Login() {
   const url = process.env.REACT_APP_API_URL;
@@ -13,7 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const backgroudImage = "https://wallpapercave.com/wp/wp3327108.jpg";
+  // const backgroudImage = "https://wallpapercave.com/wp/wp3327108.jpg";
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);

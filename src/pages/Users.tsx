@@ -21,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 interface User {
   id: number;
@@ -38,6 +39,8 @@ export default function Users() {
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
   const url = process.env.REACT_APP_API_URL;
+
+  useAuth();
 
   useEffect(() => {
     const getUsersInfo = async () => {

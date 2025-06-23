@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 interface User {
   id: number;
@@ -38,6 +39,8 @@ export default function EditUser() {
   const [error, setError] = useState("");
 
   const url = process.env.REACT_APP_API_URL;
+
+  useAuth();
 
   useEffect(() => {
     const fetchUser = async () => {
