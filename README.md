@@ -1,46 +1,83 @@
-# Getting Started with Create React App
+# 👥 User Management Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este é o **frontend React** da aplicação de gerenciamento de usuários. Ele permite autenticação, cadastro e controle de permissões (roles) entre usuários comuns e administradores.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Como rodar localmente
 
-### `npm start`
+### ✅ Pré-requisitos
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Node.js instalado (versão 18 ou superior recomendada)
+- npm ou yarn
+- Backend rodando localmente ou em ambiente de produção
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+---
 
-### `npm test`
+### 📥 Passos para rodar o projeto
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone o repositório:**
 
-### `npm run build`
+```bash
+git clone https://github.com/seu-usuario/user-management-frontend.git
+cd user-management-frontend
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 📦 Instale as dependências
+```bash
+npm install
+# ou
+yarn install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Configure as variáveis de ambiente:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Crie um arquivo .env na raiz do projeto e adicione a seguinte linha:
 
-### `npm run eject`
+```env
+REACT_APP_API_URL=https://usermanagement.duckdns.org
+```
+ℹ️ Se for rodar o backend localmente, substitua pela URL do backend local, por exemplo:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```env
+REACT_APP_API_URL=http://localhost:3000
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Execute o projeto:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```bash
+npm start
+# ou
+yarn start
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+A aplicação estará disponível em: http://localhost:3000 (ou na porta definida).
 
-## Learn More
+### 🔐 Credenciais de Acesso
+👤 Usuário administrador (admin)
+Email: admin@email.com
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Senha: admin
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 🔄 Fluxo de uso recomendado
+Acesse a aba Register e crie um novo usuário comum.
+
+Em seguida, faça login como admin usando as credenciais acima.
+
+Vá até a tela de Users.
+
+Altere a role do novo usuário de user para admin.
+
+Apenas usuários com role admin podem visualizar e editar as permissões de outros usuários.
+
+### ⚙️ Funcionalidades
+Registro e login com autenticação JWT
+
+Proteção de rotas por tipo de usuário (user vs admin)
+
+Edição de roles (permissões)
+
+Interface limpa e responsiva com Material UI
+
+Integração com backend NestJS
+
