@@ -37,11 +37,22 @@ export default function Users() {
   const [loading, setLoading] = useState(true);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const url = "http://localhost:3000";
+  const url = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const getUsersInfo = async () => {
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (payload.role !== "admin") {
+        navigate("/");
+        return;
+      }
 
       try {
         const response = await axios.get(`${url}/users`, {
@@ -59,7 +70,7 @@ export default function Users() {
     };
 
     getUsersInfo();
-  }, []);
+  }, [navigate]);
 
   const handleDeleteUser = async () => {
     if (!userToDelete) return;
@@ -218,7 +229,6 @@ export default function Users() {
         </Paper>
       </Container>
 
-      {/* Popup de confirmação de remoção */}
       <Dialog open={!!userToDelete} onClose={() => setUserToDelete(null)}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>

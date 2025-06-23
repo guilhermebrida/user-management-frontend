@@ -37,7 +37,7 @@ export default function EditUser() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState("");
 
-  const url = "http://localhost:3000";
+  const url = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -116,15 +116,8 @@ export default function EditUser() {
       <Paper elevation={4} sx={{ borderRadius: 4, p: 4 }}>
         <Box display="flex" flexDirection="row" gap={4}>
           <Box display="flex" flexDirection="column" alignItems="center" width="30%">
-            <Avatar
-              src={`https://api.dicebear.com/6.x/initials/svg?seed=${user.name}`}
-              sx={{ width: 100, height: 100 }}
-            />
-            <Chip
-              label={user.status}
-              color={user.status === "online" ? "success" : "default"}
-              sx={{ mt: 2 }}
-            />
+            <Avatar src={`https://api.dicebear.com/6.x/initials/svg?seed=${user.name}`} sx={{ width: 100, height: 100 }}/>
+            <Chip label={user.status} color={user.status === "online" ? "success" : "default"} sx={{ mt: 2 }}/>
           </Box>
 
           <Box flex={1}>
@@ -132,41 +125,11 @@ export default function EditUser() {
               Edit User
             </Typography>
             <Divider sx={{ mb: 2 }} />
-
-            <TextField
-              fullWidth
-              name="name"
-              label="Name"
-              value={formData.name}
-              onChange={handleChange}
-              margin="normal"
-            />
-
-            <TextField
-              fullWidth
-              name="email"
-              label="Email"
-              value={formData.email}
-              onChange={handleChange}
-              margin="normal"
-            />
-
-            <TextField
-              fullWidth
-              name="role"
-              label="Role"
-              value={formData.role}
-              onChange={handleChange}
-              margin="normal"
-            />
-
+            <TextField fullWidth name="name" label="Name" value={formData.name} onChange={handleChange} margin="normal"/>
+            <TextField fullWidth name="email" label="Email" value={formData.email} onChange={handleChange} margin="normal" />
+            <TextField fullWidth name="role" label="Role" value={formData.role} onChange={handleChange} margin="normal" />
             <Box mt={4}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                disabled={saving}
-              >
+              <Button variant="contained" color="primary" onClick={handleSave} disabled={saving}>
                 {saving ? "Saving..." : "Save Changes"}
               </Button>
             </Box>

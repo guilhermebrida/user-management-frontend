@@ -26,7 +26,7 @@ interface User {
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const url = "http://localhost:3000";
+  const url = process.env.REACT_APP_API_URL; 
 
   useAuth();
 
@@ -184,7 +184,7 @@ export default function Home() {
                 </Typography>
               </Box>
               <Box mt={4}>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" onClick={()=> window.location.href = "/users/edit/profile"}>
                   Edit Profile
                 </Button>
               </Box>

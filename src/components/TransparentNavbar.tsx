@@ -3,7 +3,6 @@ import {
   AppBar,
   Toolbar,
   Button,
-  Typography,
   Box,
   Link,
 } from "@mui/material";
@@ -24,6 +23,18 @@ export default function TransparentNavbar() {
     return null;
   }
 
+  // Pega o token e extrai o payload para checar role
+  const token = localStorage.getItem("token");
+  let role = null;
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      role = payload.role;
+    } catch {
+      role = null;
+    }
+  }
+
   return (
     <AppBar
       position="absolute"
@@ -32,12 +43,11 @@ export default function TransparentNavbar() {
         backgroundColor: "transparent",
         boxShadow: "none",
         backdropFilter: "none",
-        color: "white",
+        color: "black",
         zIndex: 1300,
       }}
     >
       <Toolbar sx={{ justifyContent: "end" }}>
-
         <Box display="flex" alignItems="center" gap={2}>
           <Link
             component={RouterLink}
@@ -48,15 +58,19 @@ export default function TransparentNavbar() {
           >
             Home
           </Link>
-          <Link
-            component={RouterLink}
-            to="/users"
-            underline="none"
-            color="black"
-            sx={{ mx: 1 }}
-          >
-            Users
-          </Link>
+
+          {role === "admin" && (
+            <Link
+              component={RouterLink}
+              to="/users"
+              underline="none"
+              color="black"
+              sx={{ mx: 1 }}
+            >
+              Users
+            </Link>
+          )}
+
           <Button
             variant="outlined"
             color="error"

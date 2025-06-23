@@ -1,58 +1,121 @@
-import { Box, Button, Container, TextField, Typography, Tabs, Tab, FormControlLabel, Checkbox } from "@mui/material";
-import { useState } from "react";
+import { Box, Button, Container, TextField, Typography, Tabs, Tab, CircularProgress} from "@mui/material";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Login() {
-  const url = "http://localhost:3000"
+  const url = process.env.REACT_APP_API_URL;
   const [mode, setMode] = useState<"register" | "login">("login");
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-
-  const [email, setEmail] = useState<string>('');
-  const [password,setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [registerName, setRegisterName] = useState<string>("");
+  const [registerEmail, setRegisterEmail] = useState<string>("");
+  const [registerPassword, setRegisterPassword] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const backgroudImage = "https://wallpapercave.com/wp/wp3327108.jpg";
 
-
-    const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(e.target.value);
-      console.log(email)
+  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
   };
 
-      const handleChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(e.target.value);
-      console.log(password)
+  const handleChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
   };
+
+  const handleChangeRegisterName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRegisterName(e.target.value);
+  };
+
+  const handleChangeRegisterEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRegisterEmail(e.target.value);
+  };
+
+  const handleChangeRegisterPass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRegisterPassword(e.target.value);
+  };
+
+
+  useEffect(() => {
+    const checkIfLoggedIn = () => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+
+          if (payload.role === "admin") {
+            window.location.href = "/users";
+          } else if (payload.role === "user") {
+            window.location.href = "/";
+          }
+        } catch (err) {
+          console.error("Invalid token", err);
+          localStorage.removeItem("token"); 
+        }
+      }
+    };
+
+    checkIfLoggedIn();
+  }, []);
 
   const handleSubmit = async () => {
+    setLoading(true);
+    setErrorMsg("");
     try {
       const response = await axios.post(`${url}/auth/login`, {
         email,
-        password
+        password,
       });
 
-      console.log(response);
       const token = response.data.access_token;
       localStorage.setItem("token", token);
 
       const payload = JSON.parse(atob(token.split(".")[1]));
-      console.log("Usuário logado com role:", payload.role);
-      if (payload.role == 'admin'){
-        window.location.href = "/users"
+      if (payload.role === "admin") {
+        window.location.href = "/users";
+      } else if (payload.role === "user") {
+        window.location.href = "/";
       }
-      if (payload.role == 'user'){
-        window.location.href = "/"
+    } catch (err: any) {
+      if (err.response && err.response.status === 401) {
+        setErrorMsg("Incorrect email or password.");
+      } else {
+        setErrorMsg("Login failed. Please try again.");
       }
-      
-    } catch (err) {
-      console.error("Erro no login", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    setLoading(true);
+    setErrorMsg("");
+    try {
+      const response = await axios.post(`${url}/auth/register`, {
+        name: registerName,
+        email: registerEmail,
+        password: registerPassword,
+        role: "user",
+      });
+
+      setRegisterName("");
+      setRegisterEmail("");
+      setRegisterPassword("");
+      setMode("login");
+    } catch (error: any) {
+      if (error.response) {
+        setErrorMsg(error.response.data.message || "Registration failed.");
+      } else {
+        setErrorMsg("Registration failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box 
+    <Box
       sx={{
         display: "flex",
         alignItems: "center",
@@ -61,7 +124,8 @@ export default function Login() {
         background: "linear-gradient(87deg, #11cdef 0%, #1171ef 100%)",
       }}
     >
-      <Container disableGutters
+      <Container
+        disableGutters
         sx={{
           margin: 0,
           height: "540px",
@@ -80,7 +144,7 @@ export default function Login() {
             backgroundImage: `url(${backgroudImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            padding: 0
+            padding: 0,
           }}
         />
         <Box
@@ -88,13 +152,20 @@ export default function Login() {
             flex: 0.5,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "rgb(247, 250, 252)"
+            backgroundColor: "rgb(247, 250, 252)",
           }}
         >
-          <Box display={"flex"} justifyContent={"center" } alignItems={"center"}>
+          <Box
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
             <Tabs
               value={mode}
-              onChange={(e, newValue) => setMode(newValue)}
+              onChange={(e, newValue) => {
+                setMode(newValue);
+                setErrorMsg("");
+              }}
               textColor="primary"
               indicatorColor="primary"
             >
@@ -111,31 +182,85 @@ export default function Login() {
               justifyContent: "center",
               alignItems: "center",
               padding: 2,
-              gap: 2
+              gap: 2,
             }}
           >
-            {mode === 'login' ? (
+            {mode === "login" ? (
               <>
                 <Typography variant="h3" gutterBottom sx={{ color: "#12325c" }}>
                   Sign In
                 </Typography>
-                <TextField fullWidth placeholder="Email" variant="outlined" size="small" onChange={handleChangeEmail} value={email} sx={{ width: "350px" }} />
-                <TextField fullWidth placeholder="Senha" type="password" variant="outlined" size="small" onChange={handleChangePass} value={password} sx={{ width: "350px" }} />
-                <Button size="small" onClick={handleSubmit} sx={{ bgcolor: "#12325c", color: "#ffffff", mt: 1 }} >
-                  Sign in
+                <TextField
+                  fullWidth
+                  placeholder="Email"
+                  variant="outlined"
+                  size="small"
+                  onChange={handleChangeEmail}
+                  value={email}
+                  sx={{ width: "350px" }}
+                />
+                <TextField
+                  fullWidth
+                  placeholder="Senha"
+                  type="password"
+                  variant="outlined"
+                  size="small"
+                  onChange={handleChangePass}
+                  value={password}
+                  sx={{ width: "350px" }}
+                />
+
+                {errorMsg && (
+                  <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                    {errorMsg}
+                  </Typography>
+                )}
+
+                <Button size="small" onClick={handleSubmit} sx={{ bgcolor: "#12325c", color: "#ffffff", mt: 1 }} disabled={loading} >
+                  {loading ? (
+                    <CircularProgress size={24} sx={{ color: "white" }} />
+                  ) : (
+                    "Sign in"
+                  )}
                 </Button>
               </>
             ) : (
               <>
-                <Typography variant="h3" gutterBottom sx={{ color: "#12325c" }}>
+                <Typography variant="h3" gutterBottom sx={{ color: "#12325c" }} >
                   Register
                 </Typography>
-                <TextField label="Full Name" fullWidth size="small" sx={{ width: "350px" }} />
-                <TextField label="Email Address" fullWidth size="small" sx={{ width: "350px" }} />
-                {/* <TextField label="Mobile Number" fullWidth size="small" sx={{ width: "350px" }} /> */}
-                <TextField label="Set Password" type="password" fullWidth size="small" sx={{ width: "350px" }} />
-                <Button size="small" sx={{ bgcolor: "#12325c", color: "#ffffff", mt: 1 }} >
-                  Register
+                <TextField
+                  placeholder="Full Name"
+                  fullWidth
+                  size="small"
+                  sx={{ width: "350px" }}
+                  onChange={handleChangeRegisterName}
+                  value={registerName}
+                />
+                <TextField
+                  placeholder="Email Address"
+                  fullWidth
+                  size="small"
+                  sx={{ width: "350px" }}
+                  onChange={handleChangeRegisterEmail}
+                  value={registerEmail}
+                />
+                <TextField
+                  placeholder="Set Password"
+                  type="password"
+                  fullWidth
+                  size="small"
+                  sx={{ width: "350px" }}
+                  onChange={handleChangeRegisterPass}
+                  value={registerPassword}
+                />
+
+                <Button size="small" sx={{ bgcolor: "#12325c", color: "#ffffff", mt: 1 }} onClick={handleRegister} disabled={loading} >
+                  {loading ? (
+                    <CircularProgress size={24} sx={{ color: "white" }} />
+                  ) : (
+                    "Register"
+                  )}
                 </Button>
               </>
             )}
@@ -145,4 +270,3 @@ export default function Login() {
     </Box>
   );
 }
-

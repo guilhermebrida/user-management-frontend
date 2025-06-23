@@ -5,7 +5,7 @@ import Login from './pages/Logins';
 import TransparentNavbar from './components/TransparentNavbar';
 import Users from './pages/Users';
 import EditUser from './pages/EditUser';
-
+import EditProfile from './pages/EditProfile';
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/edit/:id" element={<EditUser />} />
+        <Route path="/users/edit/profile" element={<EditProfile />} />
       </Routes>
     </BrowserRouter>
   );
