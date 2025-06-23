@@ -13,9 +13,14 @@ import {
   Typography,
   Chip,
   Skeleton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -27,8 +32,11 @@ interface User {
 }
 
 export default function Users() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const url = "http://localhost:3000";
 
   useEffect(() => {
@@ -52,6 +60,26 @@ export default function Users() {
 
     getUsersInfo();
   }, []);
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    setDeleting(true);
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.delete(`${url}/users/${userToDelete.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
+      setUserToDelete(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <Box
@@ -105,7 +133,7 @@ export default function Users() {
                   <TableCell><strong>Role</strong></TableCell>
                   <TableCell><strong>Status</strong></TableCell>
                   <TableCell><strong>Last Login</strong></TableCell>
-                  <TableCell align="center" ><strong>Actions</strong></TableCell>
+                  <TableCell align="center"><strong>Actions</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -164,10 +192,20 @@ export default function Users() {
                           : "-"}
                       </TableCell>
                       <TableCell align="center">
-                        <Button variant="text" size="small" sx={{ color: "#1d8cf8" }}>
+                        <Button
+                          variant="text"
+                          size="small"
+                          sx={{ color: "#1d8cf8" }}
+                          onClick={() => navigate(`/users/edit/${user.id}`)}
+                        >
                           Edit
                         </Button>
-                        <Button variant="text" size="small" sx={{ color: "#f44336" }}>
+                        <Button
+                          variant="text"
+                          size="small"
+                          sx={{ color: "#f44336" }}
+                          onClick={() => setUserToDelete(user)}
+                        >
                           Remove
                         </Button>
                       </TableCell>
@@ -179,6 +217,30 @@ export default function Users() {
           </TableContainer>
         </Paper>
       </Container>
+
+      {/* Popup de confirmação de remoção */}
+      <Dialog open={!!userToDelete} onClose={() => setUserToDelete(null)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete{" "}
+            <strong>{userToDelete?.name}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUserToDelete(null)} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteUser}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

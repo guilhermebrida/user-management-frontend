@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Logins';
 import TransparentNavbar from './components/TransparentNavbar';
 import Users from './pages/Users';
+import EditUser from './pages/EditUser';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/edit/:id" element={<EditUser />} />
       </Routes>
     </BrowserRouter>
   );
